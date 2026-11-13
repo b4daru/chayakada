@@ -6,7 +6,7 @@ const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAl
 const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const EMOJIS = ["😂","🔥","❤️","👏"];
 let S = null, last = '', filter = 'all', sort = 'new', prevId = 0, prevLead = '', teamsH = '', stick = false, imgData = '';
-let seen = false, shown = {}, noted = (() => { try { return JSON.parse(LS.ck_noted || '[]'); } catch(e){ return []; } })();
+let seen = false, shown = {}, noted = (() => { try { return JSON.parse(LS.ck_noted || '[]').filter(x => typeof x === 'string'); } catch(e){ return []; } })();   // reminders keyed by notice id (old numeric ones are dropped)
 const fmt = ts => new Date(ts * 1000).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
 
 /* ---------- server calls ---------- */
@@ -30,8 +30,9 @@ async function sync(force, fresh){            // fetch latest data (server answe
     if (!S) $('#msgs').innerHTML = `<p class="empty">സർവർ കിട്ടുന്നില്ല 😕<br><small>${esc(e.message)}</small><br><a href="/api?a=ping" target="_blank" rel="noopener"><u>സർവർ ടെസ്റ്റ് ചെയ്യൂ</u></a></p>`;
   }
 }
+const pickM = a => a[Math.floor(Math.random() * a.length)];   // playful picks for happy-path toasts
 function toast(t){ const d = document.createElement('div'); d.textContent = t; $('#toast').appendChild(d); setTimeout(() => d.remove(), 3200); }
-const post = (a, b) => call(a, b).catch(e => { toast(e.message); return refresh(); });   // success: keep the instant UI update, no extra request
+const post = (a, b) => call(a, b).then(r => { if (r.dup) refresh(); return r; }).catch(e => { toast(e.message); return refresh(); });   // success: keep the instant UI update; server said 'already did it': resync
 
 /* ---------- render ---------- */
 function render(){
@@ -95,9 +96,12 @@ function countTo(k, target){           // animated counter
   })(t0);
 }
 function renderNotices(){
-  $('#noticeGrid').innerHTML = S.NOTICES.map((n, i) => `
-    <div class="note ${n.tag === 'TODAY' ? 'today' : ''}" id="notice-${i}"><em>${esc(n.tag)}</em><h4>${esc(n.title)}</h4><p>${esc(n.text)}</p>
-    <button data-act="note" data-i="${i}" class="${noted.includes(i) ? 'on' : ''}">${noted.includes(i) ? '✔ ഓർമ്മിപ്പിക്കും' : '🔔 ഓർമ്മിപ്പിക്കൂ'}</button> <button data-act="share" data-k="notice" data-id="${i}" aria-label="Share">🔗</button></div>`).join('');
+  $('#noticeGrid').innerHTML = S.NOTICES.map(n => {
+    const on = noted.includes(n.id), id = esc(n.id);
+    return `
+    <div class="note ${n.tag === 'TODAY' ? 'today' : ''}" id="notice-${id}"><em>${esc(n.tag)}</em><h4>${esc(n.title)}</h4><p>${esc(n.text)}</p>
+    <button data-act="note" data-id="${id}" class="${on ? 'on' : ''}">${on ? '✔ ഓർമ്മിപ്പിക്കും' : '🔔 ഓർമ്മിപ്പിക്കൂ'}</button> <button data-act="share" data-k="notice" data-id="${id}" aria-label="Share">🔗</button></div>`;
+  }).join('');
 }
 
 /* ---------- clicks (one listener for every data-act button) ---------- */
@@ -109,7 +113,7 @@ document.addEventListener('click', e => {
   else if (d.act === 'react') { const m = S.chat.find(x => x.id == d.id); if (!m) return; if (Array.isArray(m.r)) m.r = {}; bump(m.r, d.e); renderChat(); post('react', {id:+d.id, e:d.e}); }
   else if (d.act === 'mlike') { const m = S.memes.find(x => x.id == d.id); if (!m) return; bump(m, d.k); renderMemes(); post('mlike', {id:+d.id, k:d.k}); }
   else if (d.act === 'cheer') { bump(S.cheers, d.k); renderBoard(Object.keys(S.TEAMS)); post('cheer', {t:d.k}); }
-  else if (d.act === 'note') { const i = +d.i; noted = noted.includes(i) ? noted.filter(x => x !== i) : [...noted, i]; LS.ck_noted = JSON.stringify(noted); renderNotices(); }
+  else if (d.act === 'note') { const i = d.id; noted = noted.includes(i) ? noted.filter(x => x !== i) : [...noted, i]; LS.ck_noted = JSON.stringify(noted); renderNotices(); if (noted.includes(i)) toast(pickM(['ഓർമ്മിപ്പിക്കും 🔔', 'സമയമാകുമ്പോൾ പറയാം ⏰'])); }
   else if (d.act === 'member') {
     const m = S.TEAMS[d.t].members[d.i];
     $('#mbox').className = 'mbox ' + d.t;
@@ -117,7 +121,7 @@ document.addEventListener('click', e => {
     $('#modal').hidden = false;
   }
   else if (d.act === 'share') share(d.k, d.id);
-  else if (d.act === 'copy') { (navigator.clipboard ? navigator.clipboard.writeText(d.u) : Promise.reject()).then(() => toast('ലിങ്ക് കോപ്പി ചെയ്തു ✔'), () => prompt('ലിങ്ക് കോപ്പി ചെയ്യൂ:', d.u)); }
+  else if (d.act === 'copy') { (navigator.clipboard ? navigator.clipboard.writeText(d.u) : Promise.reject()).then(() => toast(pickM(['ലിങ്ക് കോപ്പി ചെയ്തു ✔', 'കോപ്പി! ഇനി പറ്റിക്കോ 📋', 'ലിങ്ക് റെഡി, ആരെ വിളിക്കണം? 📲'])), () => prompt('ലിങ്ക് കോപ്പി ചെയ്യൂ:', d.u)); }
   else if (d.act === 'close') $('#modal').hidden = true;
 });
 $('#modal').onclick = e => { if (e.target.id === 'modal') $('#modal').hidden = true; };
@@ -152,7 +156,7 @@ $('#mFile').onchange = e => {
 $('#mPost').onclick = async () => {
   const cap = $('#mCap').value.trim(); if (!imgData || !cap) { toast('ഫോട്ടോയും ക്യാപ്ഷനും വേണം'); return; }
   $('#mPost').disabled = true;
-  try { await call('meme', {t:$('#mTeam').value, cap, img:imgData}); imgData = ''; $('#mFile').value = ''; $('#mCap').value = ''; $('#mPrev').hidden = true; toast('ട്രോൾ പോസ്റ്റ് ചെയ്തു! 😂'); await refresh(); }
+  try { await call('meme', {t:$('#mTeam').value, cap, img:imgData}); imgData = ''; $('#mFile').value = ''; $('#mCap').value = ''; $('#mPrev').hidden = true; toast(pickM(['ട്രോൾ പോസ്റ്റ് ചെയ്തു! 😂', 'കടയുടെ ചുവരിൽ ഒട്ടിച്ചു 📌', 'ചിരി ഉറപ്പ്! ട്രോൾ ലൈവ് 🤣'])); await refresh(); }
   catch(e){ toast(e.message); }
   $('#mPost').disabled = false;
 };
@@ -160,9 +164,9 @@ $('#mPost').onclick = async () => {
 /* ---------- sharing (phone share sheet, or a menu of apps on desktop) ---------- */
 function shareInfo(k, id){
   const base = location.origin + location.pathname, T = x => S?.TEAMS[x]?.name || '';
-  if (k === 'msg') { const m = S.chat.find(x => x.id == id); return {t: `💬 ${m.u} (${T(m.t)}): "${m.m}"`, u: `${base}#msg-${id}`}; }
+  if (k === 'msg') { const m = S.chat.find(x => x.id == id); if (!m) return {t: '☕ CHAYAKADA KAVALA', u: base}; return {t: `💬 ${m.u} (${T(m.t)}): "${m.m}"`, u: `${base}#msg-${id}`}; }
   if (k === 'meme') { const m = S.memes.find(x => x.id == id); return {t: `😂 ${m.cap} – ${T(m.t)} | ചായക്കട കവല`, u: `${base}#meme-${id}`, img: m.img}; }
-  if (k === 'notice') { const n = S.NOTICES[id]; return {t: `📌 ${n.title} – ${n.text}`, u: `${base}#notice-${id}`}; }
+  if (k === 'notice') { const n = S.NOTICES.find(x => x.id == id); return n ? {t: `📌 ${n.title} – ${n.text}`, u: `${base}#notice-${n.id}`} : {t: '📌 CHAYAKADA KAVALA', u: base}; }
   if (k === 'team') { const t = S.TEAMS[id]; return {t: `🛡 ${t.name}: ${t.slogan}`, u: `${base}#team-${id}`}; }
   return {t: '☕ CHAYAKADA KAVALA – ചായ ചൂടാണ്... ചർച്ച അതിലും ചൂടാണ്! Three teams. One chayakada.', u: base};
 }
@@ -184,8 +188,11 @@ async function share(k, id){
   $('#modal').hidden = false;
 }
 function goHash(){                                     // open a shared link straight at that post
-  const id = location.hash.slice(1), el = /^(msg|meme|notice|team)-/.test(id) && document.getElementById(id);
-  if (el) { el.scrollIntoView({block: 'center'}); el.classList.add('flash'); setTimeout(() => el.classList.remove('flash'), 3000); }
+  const id = location.hash.slice(1);
+  if (!/^(msg|meme|notice|team)-/.test(id)) return;
+  const el = document.getElementById(id);
+  if (!el) { if (id.startsWith('msg-')) toast('ഈ സന്ദേശം വളരെ പഴയതാണ് – ഇപ്പോൾ ചാറ്റിൽ ഇല്ല'); return; }
+  el.scrollIntoView({block: 'center'}); el.classList.add('flash'); setTimeout(() => el.classList.remove('flash'), 3000);
 }
 $('#cName').value = LS.ck_name || ''; if (LS.ck_team) $('#cTeam').value = LS.ck_team;
 $('#cSend').className = 'btn ' + $('#cTeam').value;
@@ -194,13 +201,13 @@ $('#cSend').className = 'btn ' + $('#cTeam').value;
 const io = new IntersectionObserver(es => es.forEach(x => { if (x.isIntersecting) $$('#menu a,#tabs a').forEach(a => a.classList.toggle('act', a.getAttribute('href') === '#' + x.target.id)); }), {rootMargin:'-45% 0px -50% 0px'});
 $$('section').forEach(s => io.observe(s));
 /* ---------- gentle polling: saves the host's daily hit limit ---------- */
-const POLL = 30000, IDLE_SLOW = 5 * 60000, IDLE_STOP = 15 * 60000;
+const POLL = 60000, IDLE_SLOW = 2 * 60000, IDLE_STOP = 10 * 60000;   // polling: once a minute is plenty; less load on the free quota
 let timer = 0, lastAct = Date.now(), asleep = false;
 function schedule(){
   clearTimeout(timer);
   const idle = Date.now() - lastAct;
   if (idle > IDLE_STOP) { asleep = true; return; }                       // forgotten tab: stop until the person comes back
-  const d = fails ? Math.min(POLL * 2 ** fails, 60000) : idle > IDLE_SLOW ? 60000 : POLL;   // back off on errors / when idle
+  const d = fails ? Math.min(POLL * 2 ** fails, 300000) : idle > IDLE_SLOW ? 120000 : POLL;   // back off on errors / when idle
   timer = setTimeout(async () => { await sync(); schedule(); }, d);
 }
 function wake(){ lastAct = Date.now(); if (asleep) { asleep = false; sync(true).finally(schedule); } }

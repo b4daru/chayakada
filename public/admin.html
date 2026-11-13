@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>CHAYAKADA KAVALA Admin</title>
 <link href="https://fonts.googleapis.com/css2?family=Anek+Malayalam:wght@400;700;800&family=Special+Elite&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="style.css?v=4">
 <style>
 body{padding:1rem 4% 5rem}
 .bar2{position:sticky;top:0;z-index:9;background:var(--chr);color:var(--bg);padding:.7rem 1rem;display:flex;flex-wrap:wrap;gap:.6rem;align-items:center;border-bottom:3px solid var(--muziris);margin:0 -4% 1rem}
@@ -94,7 +94,7 @@ function render(){
     nb.append(r, r2, document.createElement('hr'));
   });
   const add = document.createElement('button'); add.className = 'btn'; add.textContent = '+ പുതിയ അറിയിപ്പ്';
-  add.onclick = () => { D.NOTICES.unshift({tag: 'UPDATE', title: 'പുതിയ അറിയിപ്പ്', text: ''}); keep(); render(); };
+  add.onclick = () => { D.NOTICES.unshift({id: 'n' + Date.now().toString(36), tag: 'UPDATE', title: 'പുതിയ അറിയിപ്പ്', text: ''}); keep(); render(); };
   nb.appendChild(add); ed.appendChild(nb);
 
   // Teams
