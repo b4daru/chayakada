@@ -154,7 +154,7 @@ async function actGet(q, res) {
 }
 async function actChat(ctx, b) {
   const t = String(b.t || ''); if (!(await teamKeys()).includes(t)) throw new HttpError(400, 'ടീം തിരഞ്ഞെടുക്കൂ');
-  const m = clean(b.m, 200); if (!m) throw new HttpError(400, 'സന്ദേശം ശൂന്യമാണ്');
+  const m = clean(b.m, 200); if (!m) throw new HttpError(400, 'പൊട്ടാ,അവിടെ എന്തെങ്കിലും എഴുതിയാലേ അയക്കാൻ കഴിയൂ 😝');
   await limit(ctx, 'chat', 2);
   const u = clean(b.u, 20) || 'അജ്ഞാതൻ';
   const id = await R().incr('ck:nid');
@@ -178,9 +178,9 @@ const magicOk = (type, b) =>
 async function actMeme(ctx, b) {
   const t = String(b.t || ''); if (!(await teamKeys()).includes(t)) throw new HttpError(400, 'ടീം തിരഞ്ഞെടുക്കൂ');
   const cap = clean(b.cap, 80); if (!cap) throw new HttpError(400, 'ക്യാപ്ഷൻ വേണം');
-  const s = String(b.img || ''); if (s.length > 2200000) throw new HttpError(413, 'ചിത്രം വലുതാണ്');
+  const s = String(b.img || ''); if (s.length > 2200000) throw new HttpError(413, 'പടച്ച റബ്ബേ🤯 ഒരു ആനക്ക് പോലും ഈ IMAGE ന്റെ അത്ര സൈസ് ഇണ്ടാവൂല, ചെറുതാക്കി അയക്ക് 🤘');
   const mm = /^data:image\/(jpeg|png|webp);base64,([A-Za-z0-9+/=\s]+)$/.exec(s);
-  if (!mm) throw new HttpError(400, 'ചിത്രം ശരിയല്ല');
+  if (!mm) throw new HttpError(400, 'IMAGE ന് എന്തോ പ്രശ്നം ഇന്ദ് ഒന്നും കൂടി നോക്ക് അല്ലെങ്കിൽ വേറെ അയക്ക് ');
   const buf = Buffer.from(mm[2].replace(/\s/g, ''), 'base64');
   if (!buf.length || buf.length > 1500000 || !magicOk(mm[1], buf)) throw new HttpError(400, 'ചിത്രം വലുതാണ് / ശരിയല്ല');
   await limit(ctx, 'meme', 10);
