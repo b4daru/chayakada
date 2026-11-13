@@ -138,8 +138,8 @@ async function limit(ctx, k, s) {
   const p = R().pipeline();
   p.incr(ipk); p.expire(ipk, 120); p.set(`ck:rl:${ctx.uid ? 'u' + ctx.uid : 'i' + ctx.ip}:${k}`, '1', { nx: true, ex: s });
   const [c, , ok] = await p.exec();
-  if (+c > 400) throw new HttpError(429, 'ഈ നെറ്റ്‌വർക്കിൽ നിന്ന് വളരെയധികം റിക്വസ്റ്റുകൾ – കുറച്ച് കഴിഞ്ഞ് ശ്രമിക്കൂ');
-  if (!ok) throw new HttpError(429, 'കുറച്ച് പതുക്കെ! 😅');
+  if (+c > 400) throw new HttpError(429, 'ഇജ്ജ് ഇപ്പോ തന്നെ കൊറേ അയച്ചു , WAITAKK മച്ചു , അല്ലേൽ വെബ്സൈറ്റ് പൊളിയും 🤦‍♂️');
+  if (!ok) throw new HttpError(429, 'കുറച്ച് പതുക്കെ, സബൂർ ആവ് ! 😅');
 }
 
 /* ---------- public actions ---------- */
