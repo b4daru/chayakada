@@ -13,7 +13,7 @@ const fmt = ts => new Date(ts * 1000).toLocaleTimeString([], {hour:'2-digit', mi
 async function call(a, body, bust){
   const r = await fetch(`${API}&a=${a}${body || bust ? '&_=' + Date.now() : ''}`, body ? {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({...body, uid: UID})} : {});
   const txt = await r.text(); let j;
-  try { j = JSON.parse(txt); } catch(e){ throw new Error('സർവർ മറുപടി ശരിയല്ല: ' + txt.slice(0, 80).replace(/\s+/g, ' ')); }
+  try { j = JSON.parse(txt); } catch(e){ throw new Error('സെർവറിൽ നിന്ന് മറുപടി വരുന്നേ ഒള്ളു , വെയിറ്റ് ആക്ക് മച്ചു🤞' + txt.slice(0, 80).replace(/\s+/g, ' ')); }
   if (j.error) throw new Error(j.error); return j;
 }
 const refresh = () => { last = ''; ver = ''; return sync(true, true); };   // after my own post: ask for fresh data
@@ -27,7 +27,7 @@ async function sync(force, fresh){            // fetch latest data (server answe
   }
   catch(e){
     fails++; if (fails === 3 && S) toast('കണക്ഷൻ പ്രശ്നം… വീണ്ടും ശ്രമിക്കുന്നു');
-    if (!S) $('#msgs').innerHTML = `<p class="empty">സർവർ കിട്ടുന്നില്ല 😕<br><small>${esc(e.message)}</small><br><a href="/api?a=ping" target="_blank" rel="noopener"><u>സർവർ ടെസ്റ്റ് ചെയ്യൂ</u></a></p>`;
+    if (!S) $('#msgs').innerHTML = `<p class="empty">സർവർ കിട്ടുന്നില്ല BRO😕<br><small>${esc(e.message)}</small><br><a href="/api?a=ping" target="_blank" rel="noopener"><u>സർവർ ടെസ്റ്റ് ചെയ്യൂ</u></a></p>`;
   }
 }
 function toast(t){ const d = document.createElement('div'); d.textContent = t; $('#toast').appendChild(d); setTimeout(() => d.remove(), 3200); }
@@ -82,7 +82,7 @@ function renderBoard(K){
       <div><div class="sname">${esc(S.TEAMS[k].name)}<small>🏆 ${S.TEAMS[k].victories} വിജയങ്ങൾ</small></div><div class="bar"><div class="fill" style="width:${sc[k] / max * 100}%"></div></div></div>
       <div class="pts" id="pts-${k}">${shown[k] || 0}</div></div>`).join('');
   K.forEach(k => countTo(k, sc[k]));
-  $('#cheer').innerHTML = '<span>ഹൈപ്പ് മീറ്റർ – ടാപ്പ് ചെയ്ത് ടീമിനെ ചിയർ ചെയ്യൂ:</span> ' + K.map(k => `<button class="chip ${k}" data-act="cheer" data-k="${k}">🔥 ${esc(S.TEAMS[k].name)} <b>${S.cheers[k] || 0}</b></button>`).join(' ');
+  $('#cheer').innerHTML = '<span>ഹൈപ്പ് മീറ്റർ – ടാപ്പ് ചെയ്ത് ടീമിനെ ചില്ല് ആക്ക്😘:</span> ' + K.map(k => `<button class="chip ${k}" data-act="cheer" data-k="${k}">🔥 ${esc(S.TEAMS[k].name)} <b>${S.cheers[k] || 0}</b></button>`).join(' ');
   if (prevLead && order[0] !== prevLead) toast(`🏆 ${S.TEAMS[order[0]].name} ഒന്നാം സ്ഥാനത്ത്!`);
   prevLead = order[0];
 }
