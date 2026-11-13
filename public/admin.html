@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="ml">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CHAYAKADA KAVALA Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Anek+Malayalam:wght@400;700;800&family=Special+Elite&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<style>
+body{padding:1rem 4% 5rem}
+.bar2{position:sticky;top:0;z-index:9;background:var(--chr);color:var(--bg);padding:.7rem 1rem;display:flex;flex-wrap:wrap;gap:.6rem;align-items:center;border-bottom:3px solid var(--muziris);margin:0 -4% 1rem}
+.bar2 b{flex:1;min-width:140px;font-size:1.2rem}
+.box{background:#fffaf0;border:3px solid var(--cof);padding:1rem;margin:1rem 0}
+.box h3{margin-bottom:.6rem}
+.f{display:flex;flex-wrap:wrap;gap:.5rem;margin:.4rem 0;align-items:center}
+.f label{font-size:.8rem;display:flex;flex-direction:column;flex:1;min-width:130px}
+.f.w label{flex:3;min-width:220px}
+textarea{padding:.6rem;border:3px solid var(--cof);background:#fffaf0;color:var(--cof);width:100%;min-height:80px;border-radius:4px}
+details{border:2px solid var(--tc,var(--cof));margin:.6rem 0;padding:.5rem}
+summary{font-weight:800;cursor:pointer;min-height:36px}
+.del{background:#c0392b;color:#fff;border:0;padding:.3rem .8rem;cursor:pointer;min-height:40px;border-radius:4px}
+#login{max-width:340px;margin:20vh auto;text-align:center}
+#app{display:none}
+</style>
+</head>
+<body>
+
+<!-- Simple passcode gate. NOT real security: anyone can read it in the source. Change it! -->
+<div id="login" class="box">
+  <h3>🔒 അഡ്മിൻ</h3>
+  <input id="pass" type="password" placeholder="Passcode" style="width:100%;margin:.6rem 0">
+  <button class="btn" id="go">കയറുക</button>
+  <p id="err" style="color:#c0392b"></p>
+</div>
+
+<div id="app">
+  <div class="bar2">
+    <b>ചായക്കട കവല Admin</b>
+    <button class="btn" id="export">💾 സേവ് ചെയ്യുക</button>
+    <button class="chip" id="reload">തിരികെ ലോഡ് ചെയ്യുക</button>
+    <a class="chip" href="index.html">സൈറ്റ് കാണുക</a>
+  </div>
+  <p>എഡിറ്റ് ചെയ്ത ശേഷം <b>സേവ് ചെയ്യുക</b> അമർത്തിയാൽ മാറ്റങ്ങൾ എല്ലാവർക്കും ലൈവ് ആകും. സ്കോർ, അറിയിപ്പ്, ടീം വിവരങ്ങൾ മാറ്റാം; ചാറ്റ്/മീം മായ്ക്കാം.</p>
+  <div id="editor"></div>
+</div>
+
+<script>
+let D, PW = '';
+const $id = id => document.getElementById(id);
+const api = (a, body) => fetch('/api?i=1&a=' + a, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({...body, pw:PW})}).then(r => r.json());
+const getAll = () => fetch('/api?i=1&a=get&fresh=1&_=' + Date.now()).then(r => r.json());
+$id('go').onclick = async () => {
+  PW = $id('pass').value;
+  const r = await api('login').catch(() => ({error:'സർവർ കിട്ടുന്നില്ല'}));
+  if (r.ok) { $id('login').style.display = 'none'; $id('app').style.display = 'block'; start(); } else $id('err').textContent = r.error || 'error';
+};
+$id('pass').onkeydown = e => { if (e.key === 'Enter') $id('go').click(); };
+async function start(){ D = await getAll(); render(); }
+const keep = () => { $id('export').textContent = '💾 സേവ് ചെയ്യുക *'; };
+$id('reload').onclick = () => start();
+
+/* ---- helpers: a labelled input bound to obj[key] ---- */
+function field(obj, key, label, type){
+  const l = document.createElement('label'); l.textContent = label;
+  const i = document.createElement('input'); i.type = type || 'text'; i.value = obj[key] ?? '';
+  i.oninput = () => { obj[key] = type === 'number' ? +i.value : i.value; keep(); };
+  l.appendChild(i); return l;
+}
+const row = (...items) => { const d = document.createElement('div'); d.className = 'f'; items.forEach(x => d.appendChild(x)); return d; };
+const box = title => { const d = document.createElement('div'); d.className = 'box'; d.innerHTML = `<h3>${title}</h3>`; return d; };
+
+/* ---- render everything ---- */
+function render(){
+  const ed = document.getElementById('editor'); ed.innerHTML = '';
+
+  // Scores + victories
+  const sb = box('📊 സ്കോറും വിജയങ്ങളും');
+  Object.keys(D.TEAMS).forEach(k => {
+    sb.appendChild(row(field(D.START_SCORES, k, D.TEAMS[k].name + ' – പോയിന്റ്', 'number'), field(D.TEAMS[k], 'victories', 'വിജയങ്ങൾ', 'number')));
+  });
+  ed.appendChild(sb);
+
+  // Notices
+  const nb = box('📌 അറിയിപ്പുകൾ');
+  D.NOTICES.forEach((n, i) => {
+    const sel = document.createElement('label'); sel.textContent = 'Tag';
+    const s = document.createElement('select');
+    ['TODAY', 'SCHEDULE', 'UPDATE'].forEach(t => s.add(new Option(t, t, false, t === n.tag)));
+    s.onchange = () => { n.tag = s.value; keep(); }; sel.appendChild(s);
+    const del = document.createElement('button'); del.className = 'del'; del.textContent = 'മായ്ക്കുക';
+    del.onclick = () => { D.NOTICES.splice(i, 1); keep(); render(); };
+    const r = row(sel, field(n, 'title', 'തലക്കെട്ട്'), del);
+    const r2 = row(field(n, 'text', 'വിവരം')); r2.className = 'f w';
+    nb.append(r, r2, document.createElement('hr'));
+  });
+  const add = document.createElement('button'); add.className = 'btn'; add.textContent = '+ പുതിയ അറിയിപ്പ്';
+  add.onclick = () => { D.NOTICES.unshift({tag: 'UPDATE', title: 'പുതിയ അറിയിപ്പ്', text: ''}); keep(); render(); };
+  nb.appendChild(add); ed.appendChild(nb);
+
+  // Teams
+  const tb = box('🛡 ടീമുകൾ');
+  Object.keys(D.TEAMS).forEach(k => {
+    const t = D.TEAMS[k], det = document.createElement('details'); det.className = k;
+    det.innerHTML = `<summary>${t.name}</summary>`;
+    const r = row(field(t, 'slogan', 'Slogan'), field(t, 'intro', 'Introduction')); r.className = 'f w';
+    det.appendChild(r);
+    t.members.forEach((m, i) => {
+      det.appendChild(row(field(m, 'name', 'പേര്'), field(m, 'role', 'Role'), field(m, 'photo', 'Photo (direct image link, or uploads/a.jpg)')));
+      det.appendChild(row(field(m, 'bio', 'ചെറിയ വിവരണം')));
+    });
+    const wl = document.createElement('label'); wl.textContent = 'നേട്ടങ്ങൾ (ഒരു വരിയിൽ ഒന്ന്)';
+    const ta = document.createElement('textarea'); ta.value = t.wins.join('\n');
+    ta.oninput = () => { t.wins = ta.value.split('\n').map(x => x.trim()).filter(Boolean); keep(); };
+    det.append(wl, ta); tb.appendChild(det);
+  });
+  ed.appendChild(tb);
+  // Moderation: delete chat messages / memes
+  const mb = box('🧹 ചാറ്റ് & മീം മോഡറേഷൻ');
+  const item = (txt, act, id) => {
+    const d = document.createElement('div'); d.className = 'f'; const s = document.createElement('span'); s.style.flex = '1'; s.textContent = txt;
+    const b = document.createElement('button'); b.className = 'del'; b.textContent = 'മായ്ക്കുക';
+    b.onclick = async () => { await api(act, {id}); const f = await getAll(); D.chat = f.chat; D.memes = f.memes; render(); };
+    d.append(s, b); return d;
+  };
+  D.chat.slice().reverse().slice(0, 25).forEach(c => mb.appendChild(item(c.u + ': ' + c.m, 'del_chat', c.id)));
+  D.memes.slice().reverse().forEach(m => mb.appendChild(item('🖼 ' + m.cap, 'del_meme', m.id)));
+  ed.appendChild(mb);
+
+  // Import an old db.json (e.g. downloaded from the previous host)
+  const ib = box('📥 പഴയ db.json ഇമ്പോർട്ട്');
+  const note = document.createElement('p'); note.textContent = 'പഴയ ഹോസ്റ്റിൽ നിന്നുള്ള data/db.json തിരഞ്ഞെടുക്കൂ. നിലവിലുള്ള ചാറ്റ്, മീം, സ്കോർ എല്ലാം അതുകൊണ്ട് മാറ്റപ്പെടും.';
+  const inp = document.createElement('input'); inp.type = 'file'; inp.accept = '.json,application/json'; inp.style.margin = '.6rem 0';
+  const ibtn = document.createElement('button'); ibtn.className = 'btn'; ibtn.textContent = 'ഇമ്പോർട്ട് ചെയ്യുക';
+  ibtn.onclick = async () => {
+    const f = inp.files[0]; if (!f) return alert('db.json തിരഞ്ഞെടുക്കൂ');
+    if (!confirm('നിലവിലുള്ള ഡാറ്റ മുഴുവൻ മാറ്റപ്പെടും. തുടരട്ടെ?')) return;
+    let db; try { db = JSON.parse(await f.text()); } catch (e) { return alert('ഫയൽ ശരിയല്ല'); }
+    const r = await api('import', {db}).catch(() => ({error: 'സർവർ കിട്ടുന്നില്ല'}));
+    alert(r.ok ? 'ഇമ്പോർട്ട് ആയി ✔' : (r.error || 'error')); if (r.ok) start();
+  };
+  ib.append(note, inp, document.createElement('br'), ibtn); ed.appendChild(ib);
+}
+
+/* ---- save to server ---- */
+$id('export').onclick = async () => {
+  const r = await api('save', {TEAMS:D.TEAMS, START_SCORES:D.START_SCORES, NOTICES:D.NOTICES});
+  $id('export').textContent = r.ok ? '✅ സേവ് ആയി – ലൈവ്!' : '❌ ' + (r.error || 'error');
+};
+</script>
+</body>
+</html>
