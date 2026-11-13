@@ -25,6 +25,12 @@ Folder layout (keep it exactly like this):
   (same file names, e.g. m116.jpg). New memes posted on the Vercel site are stored in Redis, not in the folder.
 
 ## Limits to watch (free plans)
+- Built-in protection: each person can post a chat message every 4 s, react once per emoji per message, and cheer every 2 s.
+  The whole site is capped at 3000 writes per hour (Vercel -> Settings -> Environment Variables -> HOURLY_WRITE_CAP to change it).
+  If the Upstash dashboard shows you are near 500K commands/month, the Pay-as-you-go plan is cheap for a few days of event traffic.
+- Built-in protection: each person can post a chat message every 4 s, react once per emoji per message, and cheer every 2 s.
+  The whole site is capped at 3000 writes per hour (Vercel → Settings → Environment Variables → HOURLY_WRITE_CAP to change it).
+  If the Upstash dashboard shows you are near 500K commands/month, the Pay-as-you-go plan is cheap for a few days of event traffic.
 - Upstash Redis free: 500K commands/month. Check the Upstash dashboard each day during the event.
 - Vercel Hobby: 1M function invocations + 1M edge requests per month. Check Usage in the Vercel dashboard.
 - Never share ADMIN_PASS. Hobby plan is for non-commercial use only.
