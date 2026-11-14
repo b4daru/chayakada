@@ -23,7 +23,7 @@
   }
   *{box-sizing:border-box;margin:0;padding:0}
   html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);font-family:'Inter','Anek Malayalam',system-ui,sans-serif}
-  body{position:relative;display:grid;grid-template-rows:auto 1fr auto;height:100vh;padding:1.6vw 2vw 0;gap:1.4vw}
+  body{position:fixed;inset:0;display:grid;grid-template-rows:auto 1fr auto;padding:1.6vw 2vw 0;gap:1.4vw;overflow:hidden}
   svg.i{width:1.5vw;height:1.5vw;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;flex:none}
   .ml{font-family:'Anek Malayalam','Inter',sans-serif}
 
@@ -208,7 +208,7 @@ const QS = new URLSearchParams(location.search), UA = navigator.userAgent || '';
 const LITE = QS.has('lite') || (!QS.has('full') && ((navigator.deviceMemory && navigator.deviceMemory <= 1) || (/Android/.test(UA) && !/Mobile/.test(UA))));
 const DEBUG = QS.has('debug');
 document.documentElement.classList.toggle('lite', LITE);
-let D = null, memeList = [], memeNo = 0, seenMeme = null, seenMsg = 0, prevLead = '', sigBoard = '', sigTk = '', sigMsgs = '', sigMeme = '';
+let D = null, failStreak = 0, memeList = [], memeNo = 0, seenMeme = null, seenMsg = 0, prevLead = '', sigBoard = '', sigTk = '', sigMsgs = '', sigMeme = '';
 const $ = s => document.querySelector(s);
 const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const name = k => (D && D.TEAMS[k] && D.TEAMS[k].name) || '';
@@ -220,13 +220,16 @@ async function load(){
   try {
     const r = await fetch(API + '&_=' + Date.now(), {cache:'no-store'});
     const j = await r.json(); if (j.error) throw new Error(j.error);
-    D = j; $('#live').classList.add('on');
+    D = j; failStreak = 0; $('#live').classList.add('on');
     memeList = [...D.memes].sort((a, b) => b.id - a.id);
     const top = memeList.length ? memeList[0].id : null;
     if (seenMeme !== null && top !== null && top !== seenMeme) { memeNo = 0; burst(col(memeList[0].t)); }
     if (top !== null) seenMeme = top;
     renderBoard(); renderChat(); renderTicker(); showMeme();
-  } catch (e) { $('#live').classList.remove('on'); }
+  } catch (e) {
+    $('#live').classList.remove('on');
+    if (++failStreak >= 10) location.reload();   // ~5 minutes offline: restart the page itself
+  }
 }
 
 function renderBoard(){
