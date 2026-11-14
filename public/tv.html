@@ -59,12 +59,12 @@
          font-size:1.2vw;font-weight:700;letter-spacing:.1vw;text-transform:uppercase;color:var(--muted)}
   .phead svg.i{color:var(--gold);width:1.4vw;height:1.4vw}
   .phead .count{margin-left:auto;font-size:1.05vw;color:var(--muted);font-weight:600}
-  .pbody{flex:1;min-height:0;padding:1.2vw}
+  .pbody{flex:1;min-height:0;padding:1.2vw;display:flex;flex-direction:column}
   .empty{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.8vw;height:100%;color:var(--muted);font-size:1.5vw;text-align:center}
   .empty svg.i{width:3vw;height:3vw;color:var(--gold);opacity:.8}
 
   /* scoreboard */
-  #board{display:flex;flex-direction:column;gap:1vw;height:100%;justify-content:center}
+  #board{display:flex;flex-direction:column;gap:1vw;flex:1;justify-content:center;min-height:0}
   .team{position:relative;padding:1.2vw 1.3vw;border-radius:.9vw;background:var(--panel2);border:1px solid var(--line);transition:.6s}
   .team::before{content:"";position:absolute;left:0;top:14%;bottom:14%;width:.28vw;border-radius:.2vw;background:var(--tc)}
   .team.lead{border-color:color-mix(in srgb,var(--tc) 55%,transparent);background:linear-gradient(90deg,color-mix(in srgb,var(--tc) 14%,var(--panel2)),var(--panel2))}
@@ -80,18 +80,18 @@
   .fill{height:100%;border-radius:99vw;background:var(--tc);transition:width 1.3s cubic-bezier(.2,.8,.2,1)}
 
   /* meme stage */
-  .stage{height:100%;display:grid;place-items:center;min-height:0}
-  .meme{position:relative;display:flex;flex-direction:column;align-items:stretch;gap:1vw;max-height:100%;padding:1vw 1vw 1.2vw;
+  .stage{flex:1;min-height:0;display:flex;flex-direction:column;justify-content:center}
+  .meme{position:relative;flex:1;min-height:0;width:100%;display:flex;flex-direction:column;align-items:stretch;gap:.9vw;padding:1vw 1vw 1vw;
         background:#f4f1ea;color:#1b1f26;border-radius:.8vw;box-shadow:0 1.2vw 3vw rgba(0,0,0,.45);animation:in .7s cubic-bezier(.2,1,.3,1) both}
   @keyframes in{from{opacity:0;transform:translateY(1.5vw) scale(.97)}}
-  .meme .pic{height:58vh;width:58vh;max-width:100%;display:grid;place-items:center;overflow:hidden;border-radius:.4vw;
+  .meme .pic{flex:1;min-height:0;width:100%;display:grid;place-items:center;overflow:hidden;border-radius:.4vw;
              background:#e9e4da;background:color-mix(in srgb,var(--tc) 18%,#fff)}
   .meme .pic.nopic{background:#e9e4da;font-size:1.3vw;color:#6b7280;text-align:center;padding:2vw}
   .meme .pic.nopic::after{content:'ഫോട്ടോ ലോഡ് ചെയ്യാൻ പറ്റുന്നില്ല'}
   .meme .pic img{display:block;width:100%;height:100%;object-fit:contain}
   @keyframes fade{from{opacity:0}}
-  .meme .emo{font-size:24vh;line-height:1}
-  .meme .foot{display:flex;justify-content:space-between;align-items:center;gap:1.5vw;padding:0 .4vw}
+  .meme .emo{font-size:14vh;line-height:1}
+  .meme .foot{display:flex;justify-content:space-between;align-items:center;gap:1.5vw;padding:0 .4vw;flex:none}
   .cap{font-size:2.1vw;font-weight:800;line-height:1.3;color:#1b1f26;max-width:52vw}
   .tag{display:inline-flex;align-items:center;gap:.5vw;padding:.4vw .9vw;border-radius:99vw;background:var(--tc);color:#fff;font-size:1.1vw;font-weight:700;white-space:nowrap}
   .tag svg.i{width:1.1vw;height:1.1vw}
@@ -109,9 +109,9 @@
   .row2.old{animation:none}
   @keyframes slide{from{opacity:0;transform:translateY(.8vw)}}
   .av{width:2.6vw;height:2.6vw;border-radius:50%;display:grid;place-items:center;background:var(--tc);color:#fff;font-size:1.2vw;font-weight:700}
-  .meta2{display:flex;align-items:baseline;gap:.6vw;flex-wrap:wrap}
+  .meta2{display:flex;align-items:baseline;gap:1vw;flex-wrap:wrap}
   .meta2 b{font-size:1.2vw;font-weight:700;color:var(--tc);filter:brightness(1.35)}
-  .meta2 small{font-size:.95vw;color:var(--muted)}
+  .meta2 small{font-size:1vw;color:var(--muted)}
   .meta2 .rx{margin-left:auto;display:inline-flex;align-items:center;gap:.25vw;font-size:1vw;color:var(--muted)}
   .meta2 .rx svg.i{width:1vw;height:1vw}
   .msgtext{font-size:1.3vw;line-height:1.38;color:var(--text);overflow-wrap:anywhere;margin-top:.15vw}
