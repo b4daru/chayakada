@@ -6,162 +6,203 @@
 <meta name="robots" content="noindex">
 <title>MAF 2026 · CHAYAKADA – LIVE</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Anek+Malayalam:wght@400;700;800&family=Rozha+One&family=Special+Elite&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Anek+Malayalam:wght@400;600;800&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
-  /* the ambient glow colour eases smoothly between teams (Chrome, Edge, most TV browsers) */
   @property --glow { syntax: '<color>'; inherits: true; initial-value: #176B3A; }
   :root{
-    --glow:#176B3A; --cream:#F3E9D5; --ink:#332319; --brn:#79543A;
-    --meluha:#176B3A; --maabar:#1764B7; --muziris:#C69A32;
-    --glass:rgba(28,21,17,.62); --line:rgba(243,233,213,.14);
+    --glow:#176B3A;
+    --bg:#0c0f14; --panel:#131821; --panel2:#18202b; --line:rgba(255,255,255,.07);
+    --text:#e9edf2; --muted:#8b96a5; --gold:#d9b26a;
+    --meluha:#1f8a4c; --maabar:#2d7ad6; --muziris:#d9a53b;
     transition: --glow 1.6s ease;
   }
   *{box-sizing:border-box;margin:0;padding:0}
-  html,body{height:100%;overflow:hidden;background:#0d0a08;color:var(--cream);font-family:'Anek Malayalam',sans-serif}
-  body{position:relative;display:grid;grid-template-rows:auto 1fr auto;height:100vh;padding:1.4vw 1.8vw 0;gap:1.2vw}
+  html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);font-family:'Inter','Anek Malayalam',system-ui,sans-serif}
+  body{position:relative;display:grid;grid-template-rows:auto 1fr auto;height:100vh;padding:1.6vw 2vw 0;gap:1.4vw}
+  svg.i{width:1.5vw;height:1.5vw;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;flex:none}
+  .ml{font-family:'Anek Malayalam','Inter',sans-serif}
 
-  /* ---------- ambience ---------- */
-  .ambient{position:fixed;inset:-10%;z-index:-3;
-    background:
-      radial-gradient(55vw 60vh at 12% 18%, color-mix(in srgb,var(--glow) 55%,transparent), transparent 70%),
-      radial-gradient(50vw 55vh at 88% 85%, color-mix(in srgb,var(--glow) 40%,transparent), transparent 72%),
-      #0d0a08;
-    animation: drift 26s ease-in-out infinite alternate}
-  @keyframes drift{to{transform:translate3d(3%,-2%,0) scale(1.05)}}
-  .grain{position:fixed;inset:0;z-index:-2;pointer-events:none;opacity:.07;
-    background-image:repeating-linear-gradient(0deg,#fff 0 1px,transparent 1px 3px),repeating-linear-gradient(90deg,#fff 0 1px,transparent 1px 4px)}
-  .vignette{position:fixed;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(120% 90% at 50% 50%,transparent 55%,rgba(0,0,0,.7))}
+  /* ambience: a soft team-coloured light, very subtle, plus a quiet vignette */
+  .ambient{position:fixed;inset:-10%;z-index:-2;pointer-events:none;
+    background:radial-gradient(60vw 55vh at 10% 0%, color-mix(in srgb,var(--glow) 28%,transparent), transparent 70%),
+               radial-gradient(45vw 50vh at 100% 100%, color-mix(in srgb,var(--glow) 18%,transparent), transparent 70%);
+    animation: drift 30s ease-in-out infinite alternate}
+  @keyframes drift{to{transform:translate3d(2%,-1%,0)}}
+  .vignette{position:fixed;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(130% 100% at 50% 50%,transparent 60%,rgba(0,0,0,.55))}
 
-  /* ---------- header ---------- */
-  header{display:flex;justify-content:space-between;align-items:center;gap:2vw}
+  /* header */
+  header{display:flex;justify-content:space-between;align-items:center;gap:2vw;padding-bottom:1vw;border-bottom:1px solid var(--line)}
   .brand{display:flex;align-items:center;gap:1.2vw}
-  .brand .cup{font-size:3.4vw;filter:drop-shadow(0 0 1vw var(--glow))}
-  h1{font-family:'Rozha One',serif;font-size:3.8vw;line-height:1;letter-spacing:.05vw;
-     background:linear-gradient(180deg,#fff7e6,#e7c98f);-webkit-background-clip:text;background-clip:text;color:transparent;
-     filter:drop-shadow(0 .3vw 0 var(--brn))}
-  .fest{font-family:'Special Elite',monospace;font-size:1.25vw;letter-spacing:.22vw;margin-top:.6vw;opacity:.85;color:#e7c98f}
-  .fest b{color:#fff7e6;font-weight:400;background:var(--glow);padding:.1vw .6vw;border-radius:.4vw;margin-right:.4vw}
-  .hright{display:flex;align-items:center;gap:2vw}
-  #clock{font-family:'Special Elite',monospace;font-size:2vw;opacity:.8;letter-spacing:.1vw}
-  #live{font-family:'Special Elite',monospace;font-size:1.5vw;letter-spacing:.2vw;display:flex;align-items:center;gap:.7vw;
-        padding:.5vw 1.2vw;border-radius:99vw;background:rgba(0,0,0,.4);border:.15vw solid var(--line);color:#aaa;transition:.4s}
-  #live i{width:1vw;height:1vw;border-radius:50%;background:#666}
-  #live.on{color:#fff;border-color:rgba(229,57,53,.6)}
-  #live.on i{background:#ff3b30;box-shadow:0 0 1vw #ff3b30;animation:pulse 1.3s infinite}
-  @keyframes pulse{50%{opacity:.3;transform:scale(.8)}}
+  .mark{width:3.4vw;height:3.4vw;border-radius:.9vw;display:grid;place-items:center;background:var(--panel2);border:1px solid var(--line);color:var(--gold)}
+  .mark svg.i{width:1.9vw;height:1.9vw}
+  h1{font-family:'Anek Malayalam',sans-serif;font-weight:800;font-size:2.4vw;line-height:1.1;letter-spacing:.02vw}
+  .fest{font-size:1.1vw;color:var(--muted);letter-spacing:.14vw;text-transform:uppercase;margin-top:.3vw}
+  .fest b{color:var(--gold);font-weight:700;margin-right:.6vw}
+  .hright{display:flex;align-items:center;gap:1.6vw}
+  #clock{font-size:1.9vw;font-weight:600;color:var(--muted);font-variant-numeric:tabular-nums}
+  #live{display:flex;align-items:center;gap:.6vw;padding:.5vw 1.1vw;border-radius:99vw;background:var(--panel);border:1px solid var(--line);
+        font-size:1.2vw;font-weight:700;letter-spacing:.14vw;color:var(--muted);transition:.4s}
+  #live i{width:.8vw;height:.8vw;border-radius:50%;background:#555}
+  #live.on{color:var(--text)}
+  #live.on i{background:#ef4444;box-shadow:0 0 .9vw #ef4444;animation:pulse 1.4s infinite}
+  @keyframes pulse{50%{opacity:.35}}
 
-  /* ---------- layout ---------- */
-  main{display:grid;grid-template-columns:1fr 1.75fr 1fr;gap:1.6vw;min-height:0}
-  .card{position:relative;min-height:0;display:flex;flex-direction:column;gap:1vw;padding:1.4vw;border-radius:1.4vw;
-        background:var(--glass);border:.1vw solid var(--line);box-shadow:0 1vw 3vw rgba(0,0,0,.35);
-        -webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
-  .label{font-family:'Special Elite',monospace;font-size:1.3vw;letter-spacing:.25vw;text-transform:uppercase;opacity:.65;display:flex;align-items:center;gap:.8vw}
-  .label::after{content:"";flex:1;height:.1vw;background:var(--line)}
+  /* layout */
+  main{display:grid;grid-template-columns:1fr 1.7fr 1.05fr;gap:1.4vw;min-height:0}
+  .panel{display:flex;flex-direction:column;min-height:0;background:var(--panel);border:1px solid var(--line);border-radius:1.1vw;overflow:hidden}
+  .phead{display:flex;align-items:center;gap:.7vw;padding:1.1vw 1.4vw;border-bottom:1px solid var(--line);
+         font-size:1.2vw;font-weight:700;letter-spacing:.1vw;text-transform:uppercase;color:var(--muted)}
+  .phead svg.i{color:var(--gold);width:1.4vw;height:1.4vw}
+  .phead .count{margin-left:auto;font-size:1.05vw;color:var(--muted);font-weight:600}
+  .pbody{flex:1;min-height:0;padding:1.2vw}
+  .empty{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.8vw;height:100%;color:var(--muted);font-size:1.5vw;text-align:center}
+  .empty svg.i{width:3vw;height:3vw;color:var(--gold);opacity:.8}
 
-  /* ---------- scoreboard ---------- */
-  .team{position:relative;padding:1.1vw 1.2vw 1.2vw 1.6vw;border-radius:1vw;background:rgba(0,0,0,.25);overflow:hidden;
-        transition:transform .6s cubic-bezier(.2,1.2,.4,1)}
-  .team::before{content:"";position:absolute;left:0;top:0;bottom:0;width:.5vw;background:var(--tc);box-shadow:0 0 1.2vw var(--tc)}
-  .team.lead{transform:scale(1.02);background:linear-gradient(90deg,color-mix(in srgb,var(--tc) 28%,transparent),rgba(0,0,0,.2))}
-  .trow{display:flex;justify-content:space-between;align-items:flex-end;gap:1vw}
-  .tname{font-family:'Rozha One',serif;font-size:2.4vw;line-height:1;color:var(--tc);text-shadow:0 0 1.5vw color-mix(in srgb,var(--tc) 50%,transparent)}
-  .tmeta{font-family:'Special Elite',monospace;font-size:1.1vw;opacity:.7;margin-top:.4vw}
-  .tpts{font-family:'Rozha One',serif;font-size:4.2vw;line-height:.9;color:#fff;font-variant-numeric:tabular-nums}
-  .track{height:1.1vw;margin-top:.9vw;border-radius:99vw;background:rgba(255,255,255,.08);overflow:hidden}
-  .fill{height:100%;border-radius:99vw;background:linear-gradient(90deg,color-mix(in srgb,var(--tc) 70%,#000),var(--tc));box-shadow:0 0 1.2vw var(--tc);
-        transition:width 1.4s cubic-bezier(.2,.8,.2,1)}
-  .rankbadge{position:absolute;right:1vw;top:.8vw;font-family:'Special Elite',monospace;font-size:1.2vw;opacity:.6}
+  /* scoreboard */
+  #board{display:flex;flex-direction:column;gap:1vw;height:100%;justify-content:center}
+  .team{position:relative;padding:1.2vw 1.3vw;border-radius:.9vw;background:var(--panel2);border:1px solid var(--line);transition:.6s}
+  .team::before{content:"";position:absolute;left:0;top:14%;bottom:14%;width:.28vw;border-radius:.2vw;background:var(--tc)}
+  .team.lead{border-color:color-mix(in srgb,var(--tc) 55%,transparent);background:linear-gradient(90deg,color-mix(in srgb,var(--tc) 14%,var(--panel2)),var(--panel2))}
+  .trow{display:flex;justify-content:space-between;align-items:center;gap:1vw}
+  .rank{width:2.4vw;height:2.4vw;border-radius:50%;display:grid;place-items:center;background:rgba(255,255,255,.06);font-size:1.2vw;font-weight:700;color:var(--muted);flex:none}
+  .team.lead .rank{background:var(--tc);color:#fff}
+  .tname{font-size:1.9vw;font-weight:800;color:var(--text)}
+  .tmeta{display:flex;gap:1vw;align-items:center;font-size:1.05vw;color:var(--muted);margin-top:.35vw}
+  .tmeta span{display:inline-flex;align-items:center;gap:.35vw}
+  .tmeta svg.i{width:1.1vw;height:1.1vw}
+  .tpts{font-size:3.4vw;font-weight:800;line-height:1;font-variant-numeric:tabular-nums;color:#fff}
+  .track{height:.7vw;margin-top:1vw;border-radius:99vw;background:rgba(255,255,255,.06);overflow:hidden}
+  .fill{height:100%;border-radius:99vw;background:var(--tc);transition:width 1.3s cubic-bezier(.2,.8,.2,1)}
 
-  /* ---------- meme stage ---------- */
-  .stage{flex:1;min-height:0;display:grid;place-items:center;perspective:90vw}
-  .polaroid{position:relative;display:flex;flex-direction:column;align-items:center;gap:1vw;padding:1.2vw 1.2vw 2.6vw;max-height:100%;
-            background:linear-gradient(180deg,#fffdf6,#f1e7cf);color:var(--ink);border-radius:.5vw;
-            box-shadow:0 2vw 4vw rgba(0,0,0,.55),0 0 0 .2vw color-mix(in srgb,var(--tc) 60%,transparent);
-            transform:rotate(-1.2deg);animation:pop .8s cubic-bezier(.2,1.3,.4,1) both}
-  @keyframes pop{from{opacity:0;transform:translateY(3vw) rotate(-6deg) scale(.9)}to{opacity:1;transform:rotate(-1.2deg) scale(1)}}
-  .pic{height:min(60vh,56vw);width:min(60vh,56vw);max-width:100%;display:grid;place-items:center;overflow:hidden;
-       background:radial-gradient(circle at 30% 25%,color-mix(in srgb,var(--tc) 35%,#fff),color-mix(in srgb,var(--tc) 15%,#fff))}
-  .pic img{width:100%;height:100%;object-fit:contain;animation:fade 1s ease both}
+  /* meme stage */
+  .stage{height:100%;display:grid;place-items:center;min-height:0}
+  .meme{position:relative;display:flex;flex-direction:column;align-items:stretch;gap:1vw;max-height:100%;padding:1vw 1vw 1.2vw;
+        background:#f4f1ea;color:#1b1f26;border-radius:.8vw;box-shadow:0 1.2vw 3vw rgba(0,0,0,.45);animation:in .7s cubic-bezier(.2,1,.3,1) both}
+  @keyframes in{from{opacity:0;transform:translateY(1.5vw) scale(.97)}}
+  .meme .pic{height:min(62vh,58vw);width:min(62vh,58vw);max-width:100%;display:grid;place-items:center;overflow:hidden;border-radius:.4vw;
+             background:color-mix(in srgb,var(--tc) 18%,#fff)}
+  .meme .pic img{width:100%;height:100%;object-fit:contain;animation:fade .9s ease both}
   @keyframes fade{from{opacity:0}}
-  .emo{font-size:min(30vh,22vw);filter:drop-shadow(0 1vw 1vw rgba(0,0,0,.25))}
-  .cap{font-weight:800;font-size:2.4vw;line-height:1.3;text-align:center;max-width:58vw}
-  .ribbon{position:absolute;top:2.2vw;left:-1.4vw;padding:.4vw 1.4vw;background:var(--tc);color:#fff;
-          font-family:'Special Elite',monospace;font-size:1.35vw;letter-spacing:.1vw;box-shadow:0 .4vw 1vw rgba(0,0,0,.4);
-          clip-path:polygon(0 0,100% 0,calc(100% - .8vw) 50%,100% 100%,0 100%)}
-  .reacts{display:flex;gap:1.6vw;font-family:'Special Elite',monospace;font-size:1.6vw;color:var(--ink)}
-  .reacts b{color:var(--tc)}
-  .trend{position:absolute;top:-1.4vw;right:-1.4vw;background:#ff3b30;color:#fff;padding:.4vw 1.2vw;border-radius:99vw;
-         font-family:'Special Elite',monospace;font-size:1.2vw;box-shadow:0 .5vw 1.2vw rgba(255,59,48,.5);animation:pulse 1.6s infinite}
+  .meme .emo{font-size:min(28vh,20vw)}
+  .meme .foot{display:flex;justify-content:space-between;align-items:center;gap:1.5vw;padding:0 .4vw}
+  .cap{font-size:2.1vw;font-weight:800;line-height:1.3;color:#1b1f26;max-width:52vw}
+  .tag{display:inline-flex;align-items:center;gap:.5vw;padding:.4vw .9vw;border-radius:99vw;background:var(--tc);color:#fff;font-size:1.1vw;font-weight:700;white-space:nowrap}
+  .tag svg.i{width:1.1vw;height:1.1vw}
+  .stats{display:flex;gap:1.2vw;font-size:1.3vw;font-weight:700;color:#4b5563;white-space:nowrap}
+  .stats span{display:inline-flex;align-items:center;gap:.4vw}
+  .stats svg.i{width:1.3vw;height:1.3vw;color:var(--tc)}
+  .hot{position:absolute;top:1.2vw;right:1.2vw;display:inline-flex;align-items:center;gap:.4vw;padding:.4vw .9vw;border-radius:99vw;
+       background:#111827;color:#fff;font-size:1.05vw;font-weight:700}
+  .hot svg.i{width:1.1vw;height:1.1vw;color:#f97316}
 
-  /* ---------- chat ---------- */
-  #msgs{flex:1;min-height:0;display:flex;flex-direction:column;justify-content:flex-end;gap:.9vw;overflow:hidden}
-  .msg{display:flex;gap:.9vw;align-items:flex-start;animation:slide .6s cubic-bezier(.2,1,.3,1) both}
-  @keyframes slide{from{opacity:0;transform:translateX(2vw)}}
-  .av{flex:none;width:3.2vw;height:3.2vw;border-radius:50%;display:grid;place-items:center;background:var(--tc);color:#fff;
-      font-family:'Rozha One',serif;font-size:1.7vw;box-shadow:0 0 1vw color-mix(in srgb,var(--tc) 60%,transparent)}
-  .bub{flex:1;min-width:0;padding:.7vw 1vw;border-radius:0 1.2vw 1.2vw 1.2vw;background:rgba(255,255,255,.07);border:.1vw solid var(--line)}
-  .bub b{font-size:1.4vw;color:var(--tc);filter:brightness(1.35)}
-  .bub small{font-size:1vw;opacity:.55;margin-left:.6vw}
-  .bub p{font-size:1.75vw;line-height:1.35;margin-top:.2vw;overflow-wrap:anywhere}
-  .empty{font-size:1.8vw;opacity:.6;text-align:center;margin:auto}
+  /* chat: compact rows, many visible at once */
+  #msgs{display:flex;flex-direction:column;justify-content:flex-end;gap:.2vw;height:100%;overflow:hidden}
+  .row2{display:grid;grid-template-columns:2.6vw 1fr;gap:.9vw;padding:.7vw .6vw;border-radius:.6vw;border-left:.22vw solid var(--tc);
+        background:rgba(255,255,255,.025);animation:slide .5s ease both}
+  .row2.old{animation:none}
+  @keyframes slide{from{opacity:0;transform:translateY(.8vw)}}
+  .av{width:2.6vw;height:2.6vw;border-radius:50%;display:grid;place-items:center;background:var(--tc);color:#fff;font-size:1.2vw;font-weight:700}
+  .meta2{display:flex;align-items:baseline;gap:.6vw;flex-wrap:wrap}
+  .meta2 b{font-size:1.2vw;font-weight:700;color:var(--tc);filter:brightness(1.35)}
+  .meta2 small{font-size:.95vw;color:var(--muted)}
+  .meta2 .rx{margin-left:auto;display:inline-flex;align-items:center;gap:.25vw;font-size:1vw;color:var(--muted)}
+  .meta2 .rx svg.i{width:1vw;height:1vw}
+  .msgtext{font-size:1.3vw;line-height:1.38;color:var(--text);overflow-wrap:anywhere;margin-top:.15vw}
 
-  /* ---------- leader banner + confetti ---------- */
-  #banner{position:fixed;left:50%;top:9vw;transform:translate(-50%,-30vw);z-index:5;padding:1vw 2.6vw;border-radius:99vw;
-          background:linear-gradient(90deg,#c69a32,#fff1c4,#c69a32);color:#2a1d10;font-family:'Rozha One',serif;font-size:2.2vw;
-          box-shadow:0 1vw 3vw rgba(0,0,0,.5);transition:transform .8s cubic-bezier(.2,1.2,.4,1);white-space:nowrap}
+  /* leader banner + confetti */
+  #banner{position:fixed;left:50%;top:7vw;transform:translate(-50%,-22vw);z-index:5;display:flex;align-items:center;gap:.9vw;
+          padding:.9vw 1.8vw;border-radius:99vw;background:#101720;border:1px solid var(--gold);color:var(--text);
+          font-size:1.7vw;font-weight:700;box-shadow:0 1vw 3vw rgba(0,0,0,.5);transition:transform .7s cubic-bezier(.2,1.1,.4,1);white-space:nowrap}
+  #banner svg.i{width:2vw;height:2vw;color:var(--gold)}
   #banner.show{transform:translate(-50%,0)}
   #confetti{position:fixed;inset:0;pointer-events:none;z-index:4;overflow:hidden}
-  .bit{position:absolute;top:-4vh;width:.9vw;height:1.6vw;border-radius:.2vw;background:var(--c);
-       animation:fall var(--d) cubic-bezier(.3,.1,.6,1) forwards;transform:translateX(var(--x)) rotate(0)}
-  @keyframes fall{to{transform:translate(calc(var(--x) + var(--drift))) rotate(var(--r));top:110vh;opacity:.9}}
+  .bit{position:absolute;top:-4vh;width:.7vw;height:1.2vw;border-radius:.15vw;background:var(--c);
+       animation:fall var(--d) cubic-bezier(.3,.1,.6,1) forwards}
+  @keyframes fall{to{transform:translate(var(--drift),110vh) rotate(var(--r));opacity:.85}}
 
-  /* ---------- ticker ---------- */
-  .ticker{position:relative;overflow:hidden;height:4.6vw;margin:0 -1.8vw;display:flex;align-items:center;
-          background:linear-gradient(90deg,rgba(0,0,0,.6),rgba(0,0,0,.25),rgba(0,0,0,.6));border-top:.1vw solid var(--line)}
-  .tk{display:flex;gap:4vw;white-space:nowrap;padding-left:100%;animation:tick var(--t,40s) linear infinite;font-size:2vw;font-weight:700}
-  .tk span{display:inline-flex;align-items:center;gap:1.2vw}
-  .tk span::after{content:"✦";color:var(--glow);opacity:.9}
+  /* ticker */
+  .ticker{display:flex;align-items:center;height:4.2vw;margin:0 -2vw;background:#0a0d12;border-top:1px solid var(--line);overflow:hidden}
+  .tlabel{flex:none;height:100%;display:flex;align-items:center;gap:.6vw;padding:0 1.6vw;background:var(--panel2);color:var(--gold);font-size:1.15vw;font-weight:700;letter-spacing:.1vw;z-index:1}
+  .tlabel svg.i{width:1.3vw;height:1.3vw}
+  .tkwrap{flex:1;overflow:hidden}
+  .tk{display:flex;gap:3.5vw;white-space:nowrap;padding-left:100%;animation:tick var(--t,40s) linear infinite;font-size:1.5vw;color:var(--text)}
+  .tk span{display:inline-flex;align-items:center;gap:1vw}
+  .tk span::before{content:"";width:.45vw;height:.45vw;border-radius:50%;background:var(--gold)}
   @keyframes tick{to{transform:translateX(-100%)}}
 </style>
 </head>
 <body>
-<div class="ambient"></div><div class="grain"></div><div class="vignette"></div>
+<div class="ambient"></div><div class="vignette"></div>
 <div id="confetti"></div>
 <div id="banner"></div>
 
+<!-- icon set (inline SVG, no external files) -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-cup" viewBox="0 0 24 24"><path d="M17 8h1a4 4 0 0 1 0 8h-1M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V8zM6 1v3M10 1v3M14 1v3"/></symbol>
+  <symbol id="i-trophy" viewBox="0 0 24 24"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0V4zM17 5h3v2a3 3 0 0 1-3 3M7 5H4v2a3 3 0 0 0 3 3"/></symbol>
+  <symbol id="i-flame" viewBox="0 0 24 24"><path d="M12 22a7 7 0 0 0 7-7c0-3-2-5-3-7-1 2-2 3-3 3 0-3-1-6-4-8 0 3-2 5-2 8a4 4 0 0 0-1 2 7 7 0 0 0 6 9z"/></symbol>
+  <symbol id="i-laugh" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 14s1.5 2 4 2 4-2 4-2M9 9h.01M15 9h.01"/></symbol>
+  <symbol id="i-thumb" viewBox="0 0 24 24"><path d="M7 10v11H3V10h4zM7 10l4-7a2 2 0 0 1 2 2v4h6a2 2 0 0 1 2 2l-2 8a2 2 0 0 1-2 2H7"/></symbol>
+  <symbol id="i-chat" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></symbol>
+  <symbol id="i-image" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="M21 15l-5-5L5 21"/></symbol>
+  <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 17v5M9 10.8V6a3 3 0 0 1 6 0v4.8l2 2.2H7l2-2.2z"/></symbol>
+  <symbol id="i-megaphone" viewBox="0 0 24 24"><path d="M3 11v2a1 1 0 0 0 1 1h2l5 4V6L6 10H4a1 1 0 0 0-1 1zM16 8a5 5 0 0 1 0 8"/></symbol>
+  <symbol id="i-board" viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></symbol>
+  <symbol id="i-film" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M7 3v18M17 3v18M3 8h4M3 12h4M3 16h4M17 8h4M17 12h4M17 16h4"/></symbol>
+  <symbol id="i-message" viewBox="0 0 24 24"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/></symbol>
+  <symbol id="i-crown" viewBox="0 0 24 24"><path d="M3 8l4 4 5-7 5 7 4-4-2 11H5L3 8z"/></symbol>
+  <symbol id="i-sparkle" viewBox="0 0 24 24"><path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5L18 18M6 18l2.5-2.5M15.5 8.5L18 6"/></symbol>
+  <symbol id="i-radio" viewBox="0 0 24 24"><circle cx="12" cy="12" r="2"/><path d="M16.2 7.8a6 6 0 0 1 0 8.4M7.8 16.2a6 6 0 0 1 0-8.4"/></symbol>
+</svg>
+
 <header>
-  <div class="brand"><span class="cup">☕</span>
-    <div><h1>ചായക്കട കവല</h1>
-    <div class="fest"><b>MAF 2026</b> · MAJMA'A ART FEST 2026</div></div></div>
-  <div class="hright"><div id="clock">--:--</div><div id="live"><i></i>LIVE</div></div>
+  <div class="brand">
+    <div class="mark"><svg class="i"><use href="#i-cup"/></svg></div>
+    <div>
+      <h1 class="ml">ചായക്കട കവല</h1>
+      <div class="fest"><b>MAF 2026</b>Majma'a Art Fest 2026</div>
+    </div>
+  </div>
+  <div class="hright">
+    <div id="clock">--:--</div>
+    <div id="live"><i></i>LIVE</div>
+  </div>
 </header>
 
 <main>
-  <section class="card">
-    <div class="label">സ്കോർബോർഡ്</div>
-    <div id="board" style="display:flex;flex-direction:column;gap:1.2vw;flex:1;justify-content:center"></div>
+  <section class="panel">
+    <div class="phead"><svg class="i"><use href="#i-board"/></svg>സ്കോർബോർഡ്</div>
+    <div class="pbody"><div id="board"></div></div>
   </section>
-  <section class="card" style="padding:1.2vw">
-    <div class="stage" id="stage"></div>
+
+  <section class="panel">
+    <div class="phead"><svg class="i"><use href="#i-film"/></svg>ട്രോളുകൾ<span class="count" id="memeCount"></span></div>
+    <div class="pbody"><div class="stage" id="stage"></div></div>
   </section>
-  <section class="card">
-    <div class="label">ചാറ്റ്</div>
-    <div id="msgs"></div>
+
+  <section class="panel">
+    <div class="phead"><svg class="i"><use href="#i-chat"/></svg>ചാറ്റ്<span class="count" id="msgCount"></span></div>
+    <div class="pbody"><div id="msgs"></div></div>
   </section>
 </main>
 
-<div class="ticker"><div class="tk" id="tk"></div></div>
+<div class="ticker">
+  <div class="tlabel"><svg class="i"><use href="#i-megaphone"/></svg>അറിയിപ്പുകൾ</div>
+  <div class="tkwrap"><div class="tk" id="tk"></div></div>
+</div>
 
 <script>
 const API = '/api?i=1&a=get';
-const TC = {meluha:'#176B3A', maabar:'#1764B7', muziris:'#C69A32'};   // team colours, as hex for the glow
+const TC = {meluha:'#1f8a4c', maabar:'#2d7ad6', muziris:'#d9a53b'};
 const PHOTO = /^(uploads\/|\/api\/img\?)/;
-let D = null, memeList = [], memeNo = 0, seenMeme = null, seenMsg = 0, prevLead = '', sigBoard = '', sigTk = '', sigMsgs = '';
+const ic = (id, cls = '') => `<svg class="i ${cls}"><use href="#i-${id}"/></svg>`;
+let D = null, memeList = [], memeNo = 0, seenMeme = null, seenMsg = 0, prevLead = '', sigBoard = '', sigTk = '', sigMsgs = '', sigMeme = '';
 const $ = s => document.querySelector(s);
 const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const name = k => (D && D.TEAMS[k] && D.TEAMS[k].name) || '';
-const col = k => TC[k] || '#c69a32';
+const col = k => TC[k] || '#d9b26a';
 const initial = k => esc((name(k) || '?')[0]);
+const total = r => Object.values(r || {}).reduce((a, b) => a + (+b || 0), 0);
 
 async function load(){
   try {
@@ -173,9 +214,7 @@ async function load(){
     if (seenMeme !== null && top !== null && top !== seenMeme) { memeNo = 0; burst(col(memeList[0].t)); }
     if (top !== null) seenMeme = top;
     renderBoard(); renderChat(); renderTicker(); showMeme();
-  } catch (e) {
-    $('#live').classList.remove('on');   // keep the last good screen, just show we're not live
-  }
+  } catch (e) { $('#live').classList.remove('on'); }
 }
 
 function renderBoard(){
@@ -183,16 +222,23 @@ function renderBoard(){
   const order = [...keys].sort((a, b) => (sc[b] || 0) - (sc[a] || 0));
   const max = Math.max(1, ...keys.map(k => sc[k] || 0));
   const lead = order[0];
-  if (prevLead && lead !== prevLead) banner(`🏆 ${name(lead)} ഒന്നാം സ്ഥാനത്ത്!`, col(lead));
+  if (prevLead && lead !== prevLead) banner(name(lead) + ' ഒന്നാം സ്ഥാനത്ത്!', col(lead));
   prevLead = lead;
   const sig = JSON.stringify([order, sc, D.cheers, D.TEAMS]);
   if (sig === sigBoard) return; sigBoard = sig;
   $('#board').innerHTML = order.map((k, i) => `
     <div class="team ${i === 0 ? 'lead' : ''}" style="--tc:${col(k)}">
-      <div class="rankbadge">#${i + 1}</div>
       <div class="trow">
-        <div><div class="tname">${esc(name(k))}</div>
-             <div class="tmeta">🏆 ${esc(D.TEAMS[k].victories)} വിജയങ്ങൾ · 🔥 ${esc((D.cheers || {})[k] || 0)}</div></div>
+        <div style="display:flex;align-items:center;gap:1vw;min-width:0">
+          <div class="rank">${i === 0 ? ic('crown') : i + 1}</div>
+          <div style="min-width:0">
+            <div class="tname ml">${esc(name(k))}</div>
+            <div class="tmeta">
+              <span>${ic('trophy')} ${esc(D.TEAMS[k].victories)}</span>
+              <span>${ic('flame')} ${esc((D.cheers || {})[k] || 0)}</span>
+            </div>
+          </div>
+        </div>
         <div class="tpts">${esc(sc[k] || 0)}</div>
       </div>
       <div class="track"><div class="fill" style="width:${(sc[k] || 0) / max * 100}%"></div></div>
@@ -200,69 +246,80 @@ function renderBoard(){
 }
 
 function renderChat(){
-  const last = D.chat.slice(-12), newest = last.length ? last[last.length - 1].id : 0;
-  const sig = last.map(m => m.id + ':' + Object.values(m.r || {}).reduce((a, b) => a + (+b || 0), 0)).join(',');
+  const last = D.chat.slice(-40), newest = last.length ? last[last.length - 1].id : 0;
+  const sig = last.map(m => m.id + ':' + total(m.r)).join(',');
+  $('#msgCount').textContent = D.chat.length ? D.chat.length + ' സന്ദേശം' : '';
   if (sig === sigMsgs) return; sigMsgs = sig;
   const box = $('#msgs');
   box.innerHTML = last.length ? last.map(m => {
-    const reacts = Object.values(m.r || {}).reduce((a, b) => a + (+b || 0), 0);
-    const still = m.id > seenMsg ? '' : ';animation:none';          // only brand-new messages slide in
-    return `<div class="msg" style="--tc:${col(m.t)}${still}">
+    const fresh = m.id > seenMsg;
+    return `<div class="row2 ${fresh ? '' : 'old'}" style="--tc:${col(m.t)}">
       <div class="av">${initial(m.t)}</div>
-      <div class="bub"><b>${esc(m.u)}</b><small>${esc(name(m.t))}${reacts ? ' · 👍 ' + reacts : ''}</small><p>${esc(m.m)}</p></div></div>`;
-  }).join('') : '<p class="empty">ആരും ഇതുവരെ പറഞ്ഞിട്ടില്ല. നീ തുടങ്ങ്! ☕</p>';
+      <div style="min-width:0">
+        <div class="meta2"><b class="ml">${esc(m.u)}</b><small>${esc(name(m.t))}</small>
+          ${total(m.r) ? `<span class="rx">${ic('thumb')}${total(m.r)}</span>` : ''}</div>
+        <div class="msgtext ml">${esc(m.m)}</div>
+      </div></div>`;
+  }).join('') : `<div class="empty">${ic('chat')}<div class="ml">ആരും ഇതുവരെ പറഞ്ഞിട്ടില്ല. നീ തുടങ്ങ്!</div></div>`;
   seenMsg = Math.max(seenMsg, newest);
 }
 
 function showMeme(){
   const st = $('#stage');
-  if (!memeList.length) { st.innerHTML = '<p class="empty">ട്രോളുകൾ വരാൻ പോകുന്നു 😂</p>'; return; }
+  $('#memeCount').textContent = memeList.length ? memeList.length + ' ട്രോൾ' : '';
+  if (!memeList.length) { st.innerHTML = `<div class="empty">${ic('image')}<div class="ml">ട്രോളുകൾ വരാൻ പോകുന്നു</div></div>`; return; }
   const m = memeList[memeNo % memeList.length];
-  document.documentElement.style.setProperty('--glow', col(m.t));   // the whole room takes the team's colour
+  document.documentElement.style.setProperty('--glow', col(m.t));
+  const trending = m.likes > 0 && m.likes === Math.max(...memeList.map(x => x.likes));
+  const sig = m.id + ':' + m.likes + ':' + m.laughs + ':' + (trending ? 1 : 0);
+  if (sig === sigMeme) return; sigMeme = sig;
   const pic = PHOTO.test(m.img) ? `<img src="${esc(m.img)}" alt="">` : `<span class="emo">${esc(m.img)}</span>`;
-  const trending = memeList.some(x => x.likes > 0) && m.likes === Math.max(...memeList.map(x => x.likes)) && m.likes > 0;
   st.innerHTML = `
-    <div class="polaroid" style="--tc:${col(m.t)}">
-      <span class="ribbon">${esc(name(m.t))}</span>
-      ${trending ? '<span class="trend">🔥 TRENDING</span>' : ''}
+    <div class="meme" style="--tc:${col(m.t)};position:relative">
+      ${trending ? `<span class="hot">${ic('flame')} TRENDING</span>` : ''}
       <div class="pic">${pic}</div>
-      <div class="cap">${esc(m.cap)}</div>
-      <div class="reacts"><span>😂 <b>${esc(m.laughs || 0)}</b></span><span>🔥 <b>${esc(m.likes || 0)}</b></span></div>
+      <div class="foot">
+        <div class="cap ml">${esc(m.cap)}</div>
+      </div>
+      <div class="foot">
+        <span class="tag">${ic('pin')} ${esc(name(m.t))}</span>
+        <div class="stats"><span>${ic('laugh')} ${esc(m.laughs || 0)}</span><span>${ic('flame')} ${esc(m.likes || 0)}</span></div>
+      </div>
     </div>`;
 }
 
 function renderTicker(){
-  const items = ['MAF 2026 · MAJMA\'A ART FEST 2026', ...(D.NOTICES || []).map(n => `${n.title}${n.text ? ' – ' + n.text : ''}`), 'ചായ തണുക്കും മുമ്പ് വോട്ട് ചെയ്യൂ ☕', 'ട്രോൾ അയക്കൂ, ചുവരിൽ ഒട്ടിക്കാം 📌'];
+  const items = ["MAF 2026 · Majma'a Art Fest 2026",
+    ...(D.NOTICES || []).map(n => `${n.title}${n.text ? ' – ' + n.text : ''}`),
+    'ചായ തണുക്കും മുമ്പ് വോട്ട് ചെയ്യൂ', 'ട്രോൾ അയക്കൂ, ചുവരിൽ ഒട്ടിക്കാം'];
   const sig = items.join('|');
   if (sig === sigTk) return; sigTk = sig;
-  const row = items.map(t => `<span style="color:var(--cream)">${esc(t)}</span>`).join('');
+  const row = items.map(t => `<span class="ml">${esc(t)}</span>`).join('');
   $('#tk').innerHTML = row + row;
   $('#tk').style.setProperty('--t', Math.max(30, items.join(' ').length * 0.35) + 's');
 }
 
 let bannerTimer;
 function banner(text, c){
-  const b = $('#banner'); b.textContent = text; b.style.borderColor = c;
+  const b = $('#banner'); b.innerHTML = ic('trophy') + `<span class="ml">${esc(text)}</span>`; b.style.borderColor = c;
   b.classList.add('show'); clearTimeout(bannerTimer);
   bannerTimer = setTimeout(() => b.classList.remove('show'), 6000);
   burst(c);
 }
 function burst(c){
-  const box = $('#confetti'), colors = [c, '#fff1c4', '#ffb020', '#ffffff', '#ff5a5f'];
-  for (let i = 0; i < 70; i++) {
+  const box = $('#confetti'), colors = [c, '#d9b26a', '#ffffff', '#8b96a5'];
+  for (let i = 0; i < 45; i++) {
     const el = document.createElement('i'); el.className = 'bit';
-    el.style.cssText = `left:${Math.random()*100}%;--c:${colors[i % colors.length]};--x:0vw;--drift:${(Math.random()*30-15)}vw;--r:${Math.random()*720-360}deg;--d:${2.2+Math.random()*1.8}s;animation-delay:${Math.random()*.4}s`;
+    el.style.cssText = `left:${Math.random()*100}%;--c:${colors[i % colors.length]};--drift:${(Math.random()*24-12)}vw;--r:${Math.random()*540-270}deg;--d:${2.4+Math.random()*1.6}s;animation-delay:${Math.random()*.3}s`;
     box.appendChild(el); setTimeout(() => el.remove(), 4800);
   }
 }
 
-function tickClock(){
-  const d = new Date(); $('#clock').textContent = d.toLocaleTimeString('en-IN', {hour:'2-digit', minute:'2-digit', hour12: true});
-}
+function tickClock(){ $('#clock').textContent = new Date().toLocaleTimeString('en-IN', {hour:'2-digit', minute:'2-digit', hour12: true}); }
 
 load(); tickClock();
-setInterval(load, 30000);                  // fresh data every 30 s
-setInterval(() => { memeNo++; showMeme(); }, 9000);   // next meme every 9 s
+setInterval(load, 30000);
+setInterval(() => { memeNo++; showMeme(); }, 9000);
 setInterval(tickClock, 15000);
 setTimeout(() => location.reload(), 6 * 3600 * 1000);
 if (navigator.wakeLock) navigator.wakeLock.request('screen').catch(() => {});
